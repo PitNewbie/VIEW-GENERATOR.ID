@@ -1,23 +1,194 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lihat Gambar</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Generator + Viewer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh}
-img{max-width:100%;max-height:100vh}
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+    /* Viewer Mode */
+    body.viewer { background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; }
+   .viewer img { max-width: 100%; max-height: 100%; object-fit: contain; }
+   .viewer.error { color: #fff; font-size: 18px; text-align: center; }
+
+    /* Generator Mode */
+    body.generator { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+   .container { background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    h1 { text-align: center; color: #333; margin-bottom: 20px; font-size: 24px; }
+   .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+   .tab { flex: 1; padding: 10px 8px; border: 2px solid #667eea; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; font-weight: 600; color: #667eea; font-size: 14px; }
+   .tab.active { background: #667eea; color: white; }
+   .input-box { margin-bottom: 20px; }
+    input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; margin-bottom: 10px; }
+    input:focus, textarea:focus { border-color: #667eea; }
+    textarea { resize: vertical; min-height: 80px; }
+    input[type="file"] { padding: 10px; background: #f5f5f5; cursor: pointer; }
+    button { width: 100%; padding: 14px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
+    button:hover:not(:disabled) { background: #5568d3; }
+    #qrcode { display: flex; justify-content: center; margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 15px; }
+   .download-btn { background: #28a745; display: none; }
+   .hint { font-size: 13px; color: #666; margin-top: 5px; }
+   .content { display: none; }
+   .content.active { display: block; }
+   .preview-img { max-width: 100%; max-height: 200px; margin: 10px 0; border-radius: 10px; display: none; }
 </style>
 </head>
 <body>
+<div id="app"></div>
+
 <script>
-let params = new URLSearchParams(window.location.search);
-let img = params.get('img');
-if(img){
-  document.body.innerHTML = '<img src="'+img+'">';
-}else{
-  document.body.innerHTML = '<p style="color:white">Gambar tidak ditemukan</p>';
+// Cek mode: ada?view= atau enggak
+const params = new URLSearchParams(window.location.search);
+const viewFile = params.get('view');
+
+if (viewFile) {
+    // MODE VIEWER
+    document.body.className = 'viewer';
+    const app = document.getElementById('app');
+    const img = new Image();
+    img.src = decodeURIComponent(viewFile);
+
+    img.onload = () => app.appendChild(img);
+    img.onerror = () => app.innerHTML = '<div class="error">Gambar tidak ditemukan</div>';
+} else {
+    // MODE GENERATOR
+    document.body.className = 'generator';
+    document.getElementById('app').innerHTML = `
+    <div class="container">
+        <h1>🔲 QR Code Generator</h1>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('link')">Link/Web</div>
+            <div class="tab" onclick="switchTab('wa')">WhatsApp</div>
+            <div class="tab" onclick="switchTab('text')">Teks</div>
+            <div class="tab" onclick="switchTab('img')">Foto</div>
+        </div>
+
+        <div id="link" class="content active">
+            <div class="input-box">
+                <input type="url" id="linkInput" placeholder="https://contoh.com">
+            </div>
+        </div>
+
+        <div id="wa" class="content">
+            <div class="input-box">
+                <input type="tel" id="waNumber" placeholder="6281234567890">
+                <textarea id="waMessage" placeholder="Halo, saya mau tanya..."></textarea>
+            </div>
+        </div>
+
+        <div id="text" class="content">
+            <div class="input-box">
+                <textarea id="textInput" placeholder="Tulis teks apapun di sini..."></textarea>
+            </div>
+        </div>
+
+        <div id="img" class="content">
+            <div class="input-box">
+                <input type="file" id="imgInput" accept="image/*">
+                <img id="preview" class="preview-img">
+                <div class="hint">Upload file ini ke Netlify bareng index.html</div>
+            </div>
+        </div>
+
+        <button onclick="generateQR()">Buat QR Code</button>
+        <div id="qrcode"></div>
+        <button class="download-btn" id="downloadBtn" onclick="downloadQR()">Download QR</button>
+    </div>
+    `;
+
+    let qrcode;
+    let currentTab = 'link';
+    const BASE_URL = window.location.origin + window.location.pathname + '?view=';
+
+    window.switchTab = function(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById(tab).classList.add('active');
+        document.getElementById('qrcode').innerHTML = '';
+        document.getElementById('downloadBtn').style.display = 'none';
+    }
+
+    document.addEventListener('change', function(e) {
+        if (e.target.id === 'imgInput') {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview').src = e.target.result;
+                document.getElementById('preview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    window.generateQR = function() {
+        let data = '';
+
+        if (currentTab === 'link') {
+            data = document.getElementById('linkInput').value.trim();
+            if (!data) return alert('Masukkan URL');
+            if (!data.startsWith('http')) data = 'https://' + data;
+        }
+
+        if (currentTab === 'wa') {
+            let number = document.getElementById('waNumber').value.replace(/\D/g, '');
+            let message = encodeURIComponent(document.getElementById('waMessage').value);
+            if (!number) return alert('Masukkan nomor WhatsApp');
+            data = `https://wa.me/${number}?text=${message}`;
+        }
+
+        if (currentTab === 'text') {
+            data = document.getElementById('textInput').value.trim();
+            if (!data) return alert('Masukkan teks');
+        }
+
+        if (currentTab === 'img') {
+            const file = document.getElementById('imgInput').files[0];
+            if (!file) return alert('Pilih foto dulu');
+            data = BASE_URL + encodeURIComponent(file.name);
+            alert('Jangan lupa upload file "' + file.name + '" ke Netlify!');
+        }
+
+        document.getElementById('qrcode').innerHTML = '';
+        qrcode = new QRCode(document.getElementById('qrcode'), {
+            text: data,
+            width: 250,
+            height: 250,
+            colorDark: '#000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        setTimeout(() => {
+            document.getElementById('downloadBtn').style.display = 'block';
+        }, 400);
+    }
+
+    window.downloadQR = function() {
+        let canvas = document.querySelector('#qrcode canvas');
+        if (!canvas) return alert('Buat QR dulu');
+
+        let margin = 20;
+        let size = canvas.width + margin * 2;
+        let newCanvas = document.createElement('canvas');
+        newCanvas.width = size;
+        newCanvas.height = size;
+        let ctx = newCanvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, size, size);
+        ctx.drawImage(canvas, margin, margin);
+
+        let dataURL = newCanvas.toDataURL('image/png');
+        let link = document.createElement('a');
+        link.download = 'qr-code.png';
+        link.href = dataURL;
+        link.click();
+    }
 }
 </script>
 </body>
-</html>
+  </html>
