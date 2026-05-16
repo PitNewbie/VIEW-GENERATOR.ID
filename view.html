@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lihat Gambar</title>
+<style>
+body{margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh}
+img{max-width:100%;max-height:100vh}
+</style>
+</head>
+<body>
+<script>
+let params = new URLSearchParams(window.location.search);
+let img = params.get('img');
+if(img){
+  document.body.innerHTML = '<img src="'+img+'">';
+}else{
+  document.body.innerHTML = '<p style="color:white">Gambar tidak ditemukan</p>';
+}
+</script>
+</body>
+</html>
