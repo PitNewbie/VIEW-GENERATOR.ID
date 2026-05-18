@@ -1,194 +1,1344 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QR Generator + Viewer</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Premium Lucky Spin</title>
+    <link href="https://fonts.googleapis.com/css2=family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: rgba(26, 26, 36, 0.6);
+            --gold: #ffd700;
+            --gold-glow: #ffaa00;
+            --crystal: #00f0ff;
+            --text-light: #f5f5f7;
+            --text-muted: #86868b;
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --danger: #ff3333;
+            --success: #00ff66;
+        }
 
-    /* Viewer Mode */
-    body.viewer { background: #000; display: flex; align-items: center; justify-content: center; height: 100vh; }
-   .viewer img { max-width: 100%; max-height: 100%; object-fit: contain; }
-   .viewer.error { color: #fff; font-size: 18px; text-align: center; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    /* Generator Mode */
-    body.generator { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-   .container { background: white; border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-    h1 { text-align: center; color: #333; margin-bottom: 20px; font-size: 24px; }
-   .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-   .tab { flex: 1; padding: 10px 8px; border: 2px solid #667eea; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; font-weight: 600; color: #667eea; font-size: 14px; }
-   .tab.active { background: #667eea; color: white; }
-   .input-box { margin-bottom: 20px; }
-    input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 10px; font-size: 15px; outline: none; margin-bottom: 10px; }
-    input:focus, textarea:focus { border-color: #667eea; }
-    textarea { resize: vertical; min-height: 80px; }
-    input[type="file"] { padding: 10px; background: #f5f5f5; cursor: pointer; }
-    button { width: 100%; padding: 14px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
-    button:hover:not(:disabled) { background: #5568d3; }
-    #qrcode { display: flex; justify-content: center; margin-top: 20px; padding: 20px; background: #f5f5f5; border-radius: 15px; }
-   .download-btn { background: #28a745; display: none; }
-   .hint { font-size: 13px; color: #666; margin-top: 5px; }
-   .content { display: none; }
-   .content.active { display: block; }
-   .preview-img { max-width: 100%; max-height: 200px; margin: 10px 0; border-radius: 10px; display: none; }
-</style>
+        body {
+            background: linear-gradient(135deg, #0b0c10 0%, #1f2833 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding-bottom: 60px;
+            overflow-x: hidden;
+        }
+
+        /* HEADER & TOP BAR */
+        header {
+            text-align: center;
+            padding: 25px 20px 10px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #fff, var(--gold), #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        header p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* CONTAINER ATAS UTK WALLET DAN MISI LOGIN */
+        .top-action-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            max-width: 460px;
+            margin: 15px auto;
+            padding: 0 15px;
+        }
+
+        .currency-container {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .currency-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            padding: 8px 12px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            font-size: 12px;
+            flex: 1;
+            white-space: nowrap;
+        }
+
+        .currency-bar.crystal-bar i {
+            color: var(--crystal);
+            filter: drop-shadow(0 0 5px var(--crystal));
+        }
+
+        .currency-bar.token-bar i {
+            color: var(--gold);
+            filter: drop-shadow(0 0 5px var(--gold));
+        }
+
+        .currency-bar i {
+            margin-right: 6px;
+        }
+
+        .currency-bar span {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* TOMBOL KOTAK KECIL MISI LOGIN */
+        .login-mission-trigger {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .login-mission-trigger:hover {
+            background: var(--gold);
+            color: #000;
+            transform: scale(1.05);
+        }
+
+        .login-mission-trigger .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--danger);
+            display: none;
+        }
+
+        /* NAVIGATION TABS */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 10px 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            padding: 10px 15px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            flex: 1;
+            min-width: 85px;
+            max-width: 110px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--gold) 0%, #cc9900 100%);
+            color: #000;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            border: none;
+        }
+
+        /* CONTENT SECTIONS */
+        .content-section {
+            display: none;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* SPIN WHEEL SYSTEM */
+        .spin-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 35px;
+            z-index: 10;
+            filter: drop-shadow(0 0 8px var(--gold-glow));
+        }
+
+        .wheel-outer {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #1a1a24 0deg 45deg, #252533 45deg 90deg,
+                #1a1a24 90deg 135deg, #252533 135deg 180deg,
+                #1a1a24 180deg 225deg, #252533 225deg 270deg,
+                #1a1a24 270deg 315deg, #252533 315deg 360deg
+            );
+            border: 6px solid #1a1a24;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6), inset 0 0 20px rgba(255,215,0,0.1), 0 0 0 2px var(--gold);
+            position: relative;
+            overflow: hidden;
+            transition: transform 5s cubic-bezier(0.1, 0.8, 0.1, 1);
+        }
+
+        .wheel-outer::before {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 50%, rgba(255,215,0,0.1) 50%, transparent 51%),
+                linear-gradient(0deg, transparent 50%, rgba(255,215,0,0.1) 50%, transparent 51%),
+                linear-gradient(45deg, transparent 50%, rgba(255,215,0,0.1) 50%, transparent 51%),
+                linear-gradient(135deg, transparent 50%, rgba(255,215,0,0.1) 50%, transparent 51%);
+            top: 0; left: 0;
+        }
+
+        .wheel-item {
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            display: flex;
+            justify-content: center;
+            padding-top: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+        }
+
+        .item-1 { transform: rotate(22.5deg); }
+        .item-2 { transform: rotate(67.5deg); }
+        .item-3 { transform: rotate(112.5deg); }
+        .item-4 { transform: rotate(157.5deg); }
+        .item-5 { transform: rotate(202.5deg); }
+        .item-6 { transform: rotate(247.5deg); }
+        .item-7 { transform: rotate(292.5deg); }
+        .item-8 { transform: rotate(337.5deg); }
+
+        .item-inner i {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 3px;
+            color: var(--gold);
+        }
+        .item-inner.exclusive i {
+            color: #ff3366;
+        }
+
+        .spin-center-btn {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px; height: 60px;
+            background: #000;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+        }
+        .spin-center-btn i {
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        /* MILESTONE REWARD BOX SYSTEM */
+        .milestone-container {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 12px 15px;
+            margin: 15px auto;
+            max-width: 460px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .milestone-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .milestone-title span {
+            color: var(--gold);
+            font-weight: 700;
+        }
+        .milestone-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .reward-box-btn {
+            flex: 1;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--glass-border);
+            padding: 8px 5px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .reward-box-btn i {
+            font-size: 20px;
+            color: var(--text-muted);
+        }
+        .reward-box-btn span {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+        .reward-box-btn.ready {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: var(--gold);
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+        .reward-box-btn.ready i {
+            color: var(--gold);
+        }
+        .reward-box-btn.ready span {
+            color: #fff;
+        }
+        .reward-box-btn.claimed {
+            background: rgba(0,0,0,0.4);
+            border-color: transparent;
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .reward-box-btn.claimed i {
+            color: #444;
+        }
+        .reward-box-btn.claimed span {
+            color: #444;
+            text-decoration: line-through;
+        }
+
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
+            to { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+        }
+
+        /* DUAL BUTTON SPIN SYSTEM */
+        .spin-action-area {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .spin-btn-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .main-spin-btn {
+            background: linear-gradient(135deg, #252533 0%, #121217 100%);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            transition: all 0.2s;
+            min-width: 130px;
+        }
+
+        .main-spin-btn.premium-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, #cc9900 100%);
+            color: #000;
+            border: none;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .main-spin-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .price-tag {
+            font-size: 11px;
+            color: var(--crystal);
+            font-weight: 600;
+        }
+
+        /* REDEEM CODE SECTION */
+        .redeem-box {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .redeem-box h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+        .redeem-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        .redeem-input:focus {
+            border-color: var(--crystal);
+        }
+        .redeem-btn {
+            background: var(--crystal);
+            color: #000;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        /* SHOP EVENT SYSTEM */
+        .shop-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .shop-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .shop-info h3 {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .shop-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .shop-price {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 13px;
+        }
+
+        .buy-btn {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .buy-btn:disabled {
+            border-color: #444;
+            color: #444;
+            background: transparent;
+            cursor: not-allowed;
+        }
+
+        /* DASHBOARD HADIAH */
+        .inventory-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .inventory-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .inv-details h4 {
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .inv-details span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .inv-status {
+            font-size: 11px;
+            color: var(--gold);
+            border: 1px solid rgba(255,215,0,0.3);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 40px 20px;
+            font-size: 13px;
+        }
+
+        /* LIST ELEMEN MISI LOGIN DI MODAL */
+        .mission-list-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .mission-item-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: left;
+        }
+
+        .mission-item-box.active-day {
+            border-color: var(--crystal);
+            background: rgba(0, 240, 255, 0.03);
+        }
+
+        .mission-info h4 {
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .mission-info p {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .mission-claim-btn {
+            background: var(--gold);
+            border: none;
+            color: #000;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .mission-claim-btn.claimed {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .mission-claim-btn.expired {
+            background: rgba(255, 51, 51, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            cursor: not-allowed;
+        }
+
+        .mission-claim-btn.locked {
+            background: #1f2833;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* SUB-TEXT DEKRIPSI DESCRIPTION */
+        .mission-footer-desc {
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            margin-top: 12px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-left: 2px solid var(--gold);
+        }
+
+        /* MODAL POPUP */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: linear-gradient(180deg, #1f2833 0%, #0b0c10 100%);
+            border: 2px solid var(--gold);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-box h2 {
+            font-size: 18px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .reward-display-icon {
+            font-size: 45px;
+            color: #fff;
+            margin: 10px 0;
+        }
+
+        .reward-display-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+
+        .multi-reward-list {
+            text-align: left;
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+
+        .multi-reward-item {
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .claim-info-box {
+            background: rgba(0,0,0,0.4);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            word-break: break-all;
+            border: 1px solid var(--glass-border);
+        }
+
+        .copy-action-btn {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .close-modal-btn {
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-<div id="app"></div>
 
-<script>
-// Cek mode: ada?view= atau enggak
-const params = new URLSearchParams(window.location.search);
-const viewFile = params.get('view');
+    <header>
+        <h1>Nexus Lucky Spin</h1>
+        <p>Gunakan Kristal untuk Mendapatkan Hadiah Premium</p>
+    </header>
 
-if (viewFile) {
-    // MODE VIEWER
-    document.body.className = 'viewer';
-    const app = document.getElementById('app');
-    const img = new Image();
-    img.src = decodeURIComponent(viewFile);
-
-    img.onload = () => app.appendChild(img);
-    img.onerror = () => app.innerHTML = '<div class="error">Gambar tidak ditemukan</div>';
-} else {
-    // MODE GENERATOR
-    document.body.className = 'generator';
-    document.getElementById('app').innerHTML = `
-    <div class="container">
-        <h1>🔲 QR Code Generator</h1>
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('link')">Link/Web</div>
-            <div class="tab" onclick="switchTab('wa')">WhatsApp</div>
-            <div class="tab" onclick="switchTab('text')">Teks</div>
-            <div class="tab" onclick="switchTab('img')">Foto</div>
-        </div>
-
-        <div id="link" class="content active">
-            <div class="input-box">
-                <input type="url" id="linkInput" placeholder="https://contoh.com">
+    <div class="top-action-container">
+        <div class="currency-container">
+            <div class="currency-bar crystal-bar">
+                <i class="fa-solid fa-gem"></i>
+                <span id="crystalBalanceDisplay">0 Kristal</span>
+            </div>
+            <div class="currency-bar token-bar">
+                <i class="fa-solid fa-coins"></i>
+                <span id="tokenBalanceDisplay">0 Token</span>
             </div>
         </div>
-
-        <div id="wa" class="content">
-            <div class="input-box">
-                <input type="tel" id="waNumber" placeholder="6281234567890">
-                <textarea id="waMessage" placeholder="Halo, saya mau tanya..."></textarea>
-            </div>
+        <div class="login-mission-trigger" onclick="openLoginMissionModal()" title="Misi Login Harian">
+            <i class="fa-solid fa-calendar-check" style="font-size: 18px;"></i>
+            <div class="notification-dot" id="loginNotifDot"></div>
         </div>
-
-        <div id="text" class="content">
-            <div class="input-box">
-                <textarea id="textInput" placeholder="Tulis teks apapun di sini..."></textarea>
-            </div>
-        </div>
-
-        <div id="img" class="content">
-            <div class="input-box">
-                <input type="file" id="imgInput" accept="image/*">
-                <img id="preview" class="preview-img">
-                <div class="hint">Upload file ini ke Netlify bareng index.html</div>
-            </div>
-        </div>
-
-        <button onclick="generateQR()">Buat QR Code</button>
-        <div id="qrcode"></div>
-        <button class="download-btn" id="downloadBtn" onclick="downloadQR()">Download QR</button>
     </div>
-    `;
 
-    let qrcode;
-    let currentTab = 'link';
-    const BASE_URL = window.location.origin + window.location.pathname + '?view=';
+    <div class="nav-tabs">
+        <div class="tab-btn active" onclick="switchTab('spin')">Game Spin</div>
+        <div class="tab-btn" onclick="switchTab('redeem')">Redeem Code</div>
+        <div class="tab-btn" onclick="switchTab('shop')">Shop Event</div>
+        <div class="tab-btn" onclick="switchTab('inventory')">Hadiah Saya</div>
+    </div>
 
-    window.switchTab = function(tab) {
-        currentTab = tab;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById(tab).classList.add('active');
-        document.getElementById('qrcode').innerHTML = '';
-        document.getElementById('downloadBtn').style.display = 'none';
-    }
+    <div id="spinSection" class="content-section active">
+        
+        <div class="milestone-container">
+            <div class="milestone-title">Progress Akumulasi Gacha: <span id="totalSpinDisplay">0</span> Kali Spin</div>
+            <div class="milestone-row">
+                <div class="reward-box-btn" id="box10" onclick="claimMilestone(10)">
+                    <i class="fa-solid fa-box"></i>
+                    <span>10 Spin</span>
+                </div>
+                <div class="reward-box-btn" id="box30" onclick="claimMilestone(30)">
+                    <i class="fa-solid fa-box"></i>
+                    <span>30 Spin</span>
+                </div>
+                <div class="reward-box-btn" id="box40" onclick="claimMilestone(40)">
+                    <i class="fa-solid fa-box"></i>
+                    <span>40 Spin</span>
+                </div>
+                <div class="reward-box-btn" id="box50" onclick="claimMilestone(50)">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>50 Spin</span>
+                </div>
+            </div>
+        </div>
 
-    document.addEventListener('change', function(e) {
-        if (e.target.id === 'imgInput') {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview').src = e.target.result;
-                document.getElementById('preview').style.display = 'block';
+        <div class="spin-container">
+            <svg class="wheel-pointer" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21L19 11H5L12 21Z" fill="#ffd700"/>
+            </svg>
+            
+            <div class="wheel-outer" id="wheel">
+                <div class="wheel-item item-1"><div class="item-inner exclusive"><i class="fa-solid fa-crown"></i>AM Prem</div></div>
+                <div class="wheel-item item-2"><div class="item-inner"><i class="fa-solid fa-ticket"></i>1 Token</div></div>
+                <div class="wheel-item item-3"><div class="item-inner"><i class="fa-solid fa-gem"></i>HDKU 30H</div></div>
+                <div class="wheel-item item-4"><div class="item-inner"><i class="fa-solid fa-ticket"></i>5 Token</div></div>
+                <div class="wheel-item item-5"><div class="item-inner"><i class="fa-solid fa-bolt"></i>HDKU 1M</div></div>
+                <div class="wheel-item item-6"><div class="item-inner"><i class="fa-solid fa-ticket"></i>10 Token</div></div>
+                <div class="wheel-item item-7"><div class="item-inner"><i class="fa-solid fa-star"></i>HDKU 1H</div></div>
+                <div class="wheel-item item-8"><div class="item-inner"><i class="fa-solid fa-ticket"></i>1 Token</div></div>
+            </div>
+
+            <div class="spin-center-btn">
+                <i class="fa-solid fa-bolt-lightning"></i>
+            </div>
+        </div>
+
+        <div class="spin-action-area">
+            <div class="spin-btn-box">
+                <button class="main-spin-btn" id="spin1Btn" onclick="processSpin(1)">1x Spin</button>
+                <div class="price-tag">10 Kristal</div>
+            </div>
+            <div class="spin-btn-box">
+                <button class="main-spin-btn premium-btn" id="spin10Btn" onclick="processSpin(10)">10x Spin</button>
+                <div class="price-tag">100 Kristal</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="redeemSection" class="content-section">
+        <div class="redeem-box">
+            <h3>Klaim Kristal Gratis</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">Masukkan kode unik redeem Anda untuk mengisi saldo kristal</p>
+            <input type="text" class="redeem-input" id="redeemInput" placeholder="CONTOH: HDKU6TSB..." autocomplete="off">
+            <button class="redeem-btn" onclick="executeRedeem()">Klaim Kristal</button>
+        </div>
+    </div>
+
+    <div id="shopSection" class="content-section">
+        <div class="shop-grid">
+            <div class="shop-card">
+                <div class="shop-info">
+                    <h3>HDKU Premium 1 Minggu</h3>
+                    <p>Limit pembelian: <span id="limitWeekText">1</span>x sisa</p>
+                    <div class="shop-price"><i class="fa-solid fa-coins"></i> 1,200 Token</div>
+                </div>
+                <button class="buy-btn" id="btnBuyWeek" onclick="buyShopItem('week')">Tukar</button>
+            </div>
+
+            <div class="shop-card">
+                <div class="shop-info">
+                    <h3>HDKU Premium 1 Hari</h3>
+                    <p>Limit pembelian: <span id="limitDayText">1</span>x sisa</p>
+                    <div class="shop-price"><i class="fa-solid fa-coins"></i> 500 Token</div>
+                </div>
+                <button class="buy-btn" id="btnBuyDay" onclick="buyShopItem('day')">Tukar</button>
+            </div>
+
+            <div class="shop-card">
+                <div class="shop-info">
+                    <h3>Limit HDKU 100 Token</h3>
+                    <p>Limit pembelian: <span id="limitHdkuPackText">5</span>x sisa</p>
+                    <div class="shop-price"><i class="fa-solid fa-coins"></i> 100 Token</div>
+                </div>
+                <button class="buy-btn" id="btnBuyHdkuPack" onclick="buyShopItem('hdku_pack')">Tukar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="inventorySection" class="content-section">
+        <div class="inventory-list" id="inventoryContainer"></div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box" id="modalBox"></div>
+    </div>
+
+    <script>
+        // DATA GLOBAL STATE
+        let totalCrystal = 0;
+        let totalToken = 0;
+        let totalSpinCount = 0;
+        let isSpinning = false;
+        let shopLimits = { week: 1, day: 1, hdku_pack: 5 };
+        let userInventory = [];
+        let claimedMilestones = { 10: false, 30: false, 40: false, 50: false };
+
+        // DATA STATE MISI LOGIN HARIAN
+        let loginMissionState = {
+            startDate: null,      // Kapan pertama kali buka app
+            lastLoggedDate: null, // Tanggal login terakhir dicatat
+            currentDayIndex: 1,   // Sekarang terhitung login hari ke berapa
+            claimedDays: {},      // Daftar hari yang sudah sukses diklaim {1: true}
+            expiredDays: {}       // Daftar hari yang hangus/terlewat {2: true}
+        };
+
+        const LOGIN_REWARDS_DATA = {
+            1: { type: "code", code: "HDKU1520THS-HAPAHSN677", label: "Kode redeem", desc: "Hadiah Login Hari 1" },
+            2: { type: "token", amount: 10, label: "+10 Token", desc: "Hadiah Login Hari 2" },
+            3: { type: "token", amount: 20, label: "+20 Token", desc: "Hadiah Login Hari 3" },
+            4: { type: "code", code: "HDKULLBHSJ1208-TTHD", label: "Kode redeem 4 Hari", desc: "Hadiah Login Hari 4" },
+            5: { type: "token", amount: 30, label: "+30 Token", desc: "Hadiah Login Hari 5" },
+            6: { type: "token", amount: 50, label: "+50 Token", desc: "Hadiah Login Hari 6" },
+            7: { type: "code", code: "HDKU6TSB-YHBKL7Hi12", label: "Kode redeem 7 Hari", desc: "Hadiah Login Hari 7" }
+        };
+
+        // DATABASE REDEEM CODES MURNI KRISTAL BANYAK
+        let redeemDatabase = {
+            "HDKU6TSB-YHBKL7Hi1": { crystals: 1200, used: false },
+            "HDKU1520THS-HAPAHSN677": { crystals: 200, used: false },
+            "HDKULLBHSJ1208-TTHD": { crystals: 500, used: false }
+        };
+
+        const SHOP_HDKU_CODES = ["HDKULIMIT01", "HDKULIMIT02", "HDKULIMIT03", "HDKULIMIT04", "HDKULIMIT05"];
+        const PREMIUM_CODES = { "day": "HDKUCODE819186GSNALG", "week": "HDKUCODE14267LGJEY", "month": "HDKUCODE12007G288" };
+
+        // GACHA ENGINE RATES
+        const REWARDS = [
+            { id: 1, name: "AM Premium", type: "exclusive_am", icon: "fa-crown", chance: 0.00001 },
+            { id: 2, name: "HDKU Premium 30 Hari", type: "exclusive_hdku", icon: "fa-gem", key: "month", chance: 0.00006 },
+            { id: 3, name: "HDKU Premium 1 Minggu", type: "exclusive_hdku", icon: "fa-bolt", key: "week", chance: 0.00008 },
+            { id: 4, name: "HDKU Premium 1 Hari", type: "exclusive_hdku", icon: "fa-star", key: "day", chance: 0.00010 },
+            { id: 5, name: "10 Token", type: "token", amount: 10, icon: "fa-ticket", chance: 0.20 },
+            { id: 6, name: "5 Token", type: "token", amount: 5, icon: "fa-ticket", chance: 0.50 },
+            { id: 7, name: "1 Token", type: "token", amount: 1, icon: "fa-ticket", chance: 0.96 }
+        ];
+
+        const rotationMap = { 1: 337.5, 2: 247.5, 3: 157.5, 4: 67.5, 5: 202.5, 6: 112.5, 7: 67.5 };
+
+        // LOCALSTORAGE SYSTEM
+        function saveAllDataToStorage() {
+            localStorage.setItem('nexus_totalCrystal', totalCrystal);
+            localStorage.setItem('nexus_totalToken', totalToken);
+            localStorage.setItem('nexus_totalSpinCount', totalSpinCount);
+            localStorage.setItem('nexus_shopLimits', JSON.stringify(shopLimits));
+            localStorage.setItem('nexus_userInventory', JSON.stringify(userInventory));
+            localStorage.setItem('nexus_redeemDatabase', JSON.stringify(redeemDatabase));
+            localStorage.setItem('nexus_claimedMilestones', JSON.stringify(claimedMilestones));
+            localStorage.setItem('nexus_loginMissionState', JSON.stringify(loginMissionState));
+        }
+
+        function loadAllDataFromStorage() {
+            if(localStorage.getItem('nexus_totalCrystal') !== null) {
+                totalCrystal = parseInt(localStorage.getItem('nexus_totalCrystal'));
+                totalToken = parseInt(localStorage.getItem('nexus_totalToken'));
+                totalSpinCount = parseInt(localStorage.getItem('nexus_totalSpinCount') || 0);
+                
+                let loadedLimits = JSON.parse(localStorage.getItem('nexus_shopLimits'));
+                if (loadedLimits) {
+                    shopLimits = loadedLimits;
+                    if(shopLimits.hdku_pack === undefined) shopLimits.hdku_pack = 5;
+                    if(shopLimits.week > 1 || shopLimits.day > 1 || !localStorage.getItem('nexus_hasSetWeekLimitV5')) {
+                        shopLimits.week = 1; shopLimits.day = 1;
+                        localStorage.setItem('nexus_hasSetWeekLimitV5', 'true');
+                    }
+                }
+
+                userInventory = JSON.parse(localStorage.getItem('nexus_userInventory'));
+                claimedMilestones = JSON.parse(localStorage.getItem('nexus_claimedMilestones') || '{"10":false,"30":false,"40":false,"50":false}');
+                
+                if(localStorage.getItem('nexus_loginMissionState')) {
+                    loginMissionState = JSON.parse(localStorage.getItem('nexus_loginMissionState'));
+                }
+
+                let storedDatabase = JSON.parse(localStorage.getItem('nexus_redeemDatabase'));
+                Object.keys(redeemDatabase).forEach(key => {
+                    if(storedDatabase[key] !== undefined) redeemDatabase[key] = storedDatabase[key];
+                });
+            } else {
+                localStorage.setItem('nexus_hasSetWeekLimitV5', 'true');
+                saveAllDataToStorage();
+            }
+            
+            document.getElementById('limitWeekText').innerText = shopLimits.week;
+            document.getElementById('limitDayText').innerText = shopLimits.day;
+            document.getElementById('limitHdkuPackText').innerText = shopLimits.hdku_pack;
+            
+            checkDailyLoginLogic();
+            updateUI();
+            updateMilestoneVisuals();
+        }
+
+        // LOGIKA PENGECEKAN LOGIN HARIAN & HANGUS
+        function checkDailyLoginLogic() {
+            const todayStr = new Date().toDateString();
+            
+            // Jika baru pertama kali buka fitur login mission
+            if (!loginMissionState.startDate) {
+                loginMissionState.startDate = todayStr;
+                loginMissionState.lastLoggedDate = todayStr;
+                loginMissionState.currentDayIndex = 1;
+            } else {
+                // Hitung selisih hari sesungguhnya dari startDate awal
+                const startDayTime = new Date(loginMissionState.startDate).getTime();
+                const todayTime = new Date(todayStr).getTime();
+                const diffTime = todayTime - startDayTime;
+                const absoluteDayPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // Hari ke-X sejak start
+
+                if (absoluteDayPassed <= 7) {
+                    // Cek apakah hari melompat (ada hari terlewat)
+                    if (absoluteDayPassed > loginMissionState.currentDayIndex) {
+                        // Tandai hari-hari sebelum hari ini yang belum diklaim sebagai HANGUS
+                        for (let i = loginMissionState.currentDayIndex; i < absoluteDayPassed; i++) {
+                            if (!loginMissionState.claimedDays[i]) {
+                                loginMissionState.expiredDays[i] = true;
+                            }
+                        }
+                    }
+                    loginMissionState.currentDayIndex = absoluteDayPassed;
+                    loginMissionState.lastLoggedDate = todayStr;
+                } else {
+                    // Jika sudah lewat dari 7 hari, siklus reset otomatis dari awal
+                    loginMissionState.startDate = todayStr;
+                    loginMissionState.lastLoggedDate = todayStr;
+                    loginMissionState.currentDayIndex = 1;
+                    loginMissionState.claimedDays = {};
+                    loginMissionState.expiredDays = {};
+                }
+            }
+
+            // Atur notifikasi dot merah di tombol kotak misi login
+            const currentDay = loginMissionState.currentDayIndex;
+            const hasClaimableToday = !loginMissionState.claimedDays[currentDay] && !loginMissionState.expiredDays[currentDay] && currentDay <= 7;
+            document.getElementById('loginNotifDot').style.display = hasClaimableToday ? 'block' : 'none';
+            
+            saveAllDataToStorage();
+        }
+
+        window.onload = function() {
+            loadAllDataFromStorage();
+        };
+
+        function updateUI() {
+            document.getElementById('crystalBalanceDisplay').innerText = totalCrystal + " Kristal";
+            document.getElementById('tokenBalanceDisplay').innerText = totalToken.toLocaleString() + " Token";
+            document.getElementById('totalSpinDisplay').innerText = totalSpinCount;
+            
+            document.getElementById('btnBuyWeek').disabled = (totalToken < 1200 || shopLimits.week <= 0);
+            document.getElementById('btnBuyDay').disabled = (totalToken < 500 || shopLimits.day <= 0);
+            document.getElementById('btnBuyHdkuPack').disabled = (totalToken < 100 || shopLimits.hdku_pack <= 0);
+        }
+
+        function updateMilestoneVisuals() {
+            [10, 30, 40, 50].forEach(target => {
+                const boxElement = document.getElementById('box' + target);
+                if(!boxElement) return;
+                boxElement.classList.remove('ready', 'claimed');
+                if (claimedMilestones[target]) {
+                    boxElement.classList.add('claimed');
+                } else if (totalSpinCount >= target) {
+                    boxElement.classList.add('ready');
+                }
+            });
+        }
+
+        // MEMBUKA POPUP LIST MISI LOGIN KOTAK KECIL
+        function openLoginMissionModal() {
+            const overlay = document.getElementById('modalOverlay');
+            const box = document.getElementById('modalBox');
+
+            let missionItemsHtml = "";
+            for (let i = 1; i <= 7; i++) {
+                const reward = LOGIN_REWARDS_DATA[i];
+                let statusButton = "";
+                let itemClass = (i === loginMissionState.currentDayIndex) ? "mission-item-box active-day" : "mission-item-box";
+
+                if (loginMissionState.claimedDays[i]) {
+                    if (reward.type === "code") {
+                        statusButton = `<button class="mission-claim-btn claimed" onclick="copyText('${reward.code}')"><i class="fa-solid fa-copy"></i> Salin</button>`;
+                    } else {
+                        statusButton = `<span style="color:var(--success); font-size:11px; font-weight:700;"><i class="fa-solid fa-circle-check"></i> Selesai</span>`;
+                    }
+                } else if (loginMissionState.expiredDays[i] || i < loginMissionState.currentDayIndex) {
+                    statusButton = `<button class="mission-claim-btn expired" disabled>Hangus</button>`;
+                } else if (i === loginMissionState.currentDayIndex) {
+                    statusButton = `<button class="mission-claim-btn" onclick="claimDailyLogin(${i})">Klaim</button>`;
+                } else {
+                    statusButton = `<button class="mission-claim-btn locked" disabled><i class="fa-solid fa-lock"></i> Kunci</button>`;
+                }
+
+                missionItemsHtml += `
+                    <div class="${itemClass}">
+                        <div class="mission-info">
+                            <h4>Hari Ke-${i} ${i === loginMissionState.currentDayIndex ? '<span style="color:var(--crystal); font-size:10px;">(Hari Ini)</span>' : ''}</h4>
+                            <p>${reward.label} - ${reward.desc}</p>
+                        </div>
+                        <div>${statusButton}</div>
+                    </div>
+                `;
+            }
+
+            box.innerHTML = `
+                <h2><i class="fa-solid fa-calendar-days" style="color:var(--gold); margin-right:8px;"></i>Misi Login</h2>
+                <p style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Masuk setiap hari berturut-turut agar hadiah tidak hangus!</p>
+                
+                <div class="mission-list-wrapper">${missionItemsHtml}</div>
+                
+                <div class="mission-footer-desc">
+                    <strong>Rincian:</strong> login selama 7 hari dan kumpulkan token, token sampai 1,300, dan tukerkan ke premium 1 Minggu
+                </div>
+                
+                <button class="close-modal-btn" onclick="closeModal()" style="margin-top:15px; border-color:var(--gold); color:var(--gold)">Tutup</button>
+            `;
+            overlay.style.display = 'flex';
+        }
+
+        // PROSES EKSEKUSI KLAIM TOMBOL LOGIN
+        function claimDailyLogin(dayNum) {
+            if (dayNum !== loginMissionState.currentDayIndex) return;
+            if (loginMissionState.claimedDays[dayNum] || loginMissionState.expiredDays[dayNum]) return;
+
+            const reward = LOGIN_REWARDS_DATA[dayNum];
+            loginMissionState.claimedDays[dayNum] = true;
+
+            if (reward.type === "token") {
+                totalToken += reward.amount;
+                alert(`Sukses Klaim Login Hari ke-${dayNum}! Hadiah ${reward.amount} Koin Token berhasil ditambahkan.`);
+            } else if (reward.type === "code") {
+                // Masukkan juga kodenya ke inventori agar tersimpan permanen
+                let loginItem = {
+                    uniqueId: Math.random() + Date.now(),
+                    name: `${reward.label} (Misi Login)`,
+                    icon: "fa-star",
+                    type: "exclusive_hdku",
+                    claimedDate: new Date().toLocaleDateString('id-ID'),
+                    redeemCode: reward.code
+                };
+                userInventory.unshift(loginItem);
+                alert(`Sukses Klaim Login Hari ke-${dayNum}! Kode Premium dikirim ke Tab 'Hadiah Saya' & bisa kamu salin sekarang.`);
+            }
+
+            checkDailyLoginLogic();
+            saveAllDataToStorage();
+            updateUI();
+            openLoginMissionModal(); // Segarkan isi list di popup modal
+        }
+
+        function claimMilestone(target) {
+            if (totalSpinCount < target) {
+                alert(`Kemajuan Spin belum cukup! Anda perlu ${target - totalSpinCount}x spin lagi untuk membuka box ini.`);
+                return;
+            }
+            if (claimedMilestones[target]) {
+                alert("Box reward hadiah milestone ini sudah pernah Anda ambil!");
+                return;
+            }
+            claimedMilestones[target] = true;
+            if (target === 10) { totalToken += 10; alert("Selamat! Hadiah Box 10 Spin: +10 Koin Token."); }
+            else if (target === 30) { totalToken += 40; alert("Selamat! Hadiah Box 30 Spin: +40 Koin Token."); }
+            else if (target === 40) { totalToken += 60; alert("Selamat! Hadiah Box 40 Spin: +60 Koin Token."); }
+            else if (target === 50) {
+                let milestoneItem = {
+                    uniqueId: Math.random() + Date.now(), name: "HDKU Premium 1 Hari (Box Reward)",
+                    icon: "fa-star", type: "exclusive_hdku", claimedDate: new Date().toLocaleDateString('id-ID'), redeemCode: PREMIUM_CODES.day
+                };
+                userInventory.unshift(milestoneItem);
+                alert("Selamat! Box 50 Spin: Item 'HDKU Premium 1 Hari' sukses dikirim ke Tab 'Hadiah Saya'.");
+            }
+            saveAllDataToStorage(); updateUI(); updateMilestoneVisuals();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Section').classList.add('active');
+            if(tabName === 'inventory') renderInventory();
+            updateUI();
+        }
+
+        function executeRedeem() {
+            const inputField = document.getElementById('redeemInput');
+            const code = inputField.value.trim();
+            if(!code) { alert("Masukkan kode redeem terlebih dahulu!"); return; }
+            if(redeemDatabase[code]) {
+                if(redeemDatabase[code].used) { alert("Maaf, kode redeem ini sudah pernah Anda gunakan!"); }
+                else {
+                    let rewardCrystals = redeemDatabase[code].crystals; totalCrystal += rewardCrystals; redeemDatabase[code].used = true;
+                    saveAllDataToStorage(); updateUI();
+                    alert(`Selamat! Anda mendapatkan ${rewardCrystals} Kristal.`); inputField.value = "";
+                }
+            } else { alert("Kode redeem salah atau tidak valid!"); }
+        }
+
+        function processSpin(amount) {
+            let cost = amount === 10 ? 100 : 10;
+            if(totalCrystal < cost) { alert("Kristal tidak cukup! Silakan klaim kristal lewat menu Redeem Code."); return; }
+            if(isSpinning) return;
+            totalCrystal -= cost; totalSpinCount += amount;
+            updateUI(); updateMilestoneVisuals();
+            isSpinning = true; toggleSpinButtons(true);
+            let results = []; for(let i=0; i<amount; i++) { results.push(rollGacha()); }
+            let lastItem = results[results.length - 1];
+            let baseDeg = 3600; let targetDeg = rotationMap[lastItem.id] || 22.5; let totalRotation = baseDeg + targetDeg;
+            const wheel = document.getElementById('wheel');
+            wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.8, 0.1, 1)'; wheel.style.transform = `rotate(${totalRotation}deg)`;
+            setTimeout(() => {
+                wheel.style.transition = 'none'; wheel.style.transform = `rotate(${targetDeg}deg)`;
+                processGachaResults(results); isSpinning = false; toggleSpinButtons(false);
+            }, 4200);
+        }
+
+        function toggleSpinButtons(status) {
+            document.getElementById('spin1Btn').disabled = status;
+            document.getElementById('spin10Btn').disabled = status;
+        }
+
+        function rollGacha() {
+            let roll = Math.random(); let accumulatedChance = 0;
+            for (let item of REWARDS) {
+                accumulatedChance += item.chance; if (roll <= accumulatedChance) return item;
+            }
+            return REWARDS[6];
+        }
+
+        function processGachaResults(results) {
+            let tokenGained = 0; let itemsClaimed = [];
+            results.forEach(reward => {
+                if(reward.type === 'token') { tokenGained += reward.amount; }
+                else {
+                    let kodeKlaimStatis = reward.key ? PREMIUM_CODES[reward.key] : "CODE-AM-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+                    let newItem = {
+                        uniqueId: Math.random() + Date.now(), name: reward.name, icon: reward.icon, type: reward.type,
+                        claimedDate: new Date().toLocaleDateString('id-ID'), links: ["https://alightmotion.link/preset/kamu-disini-1", "https://alightmotion.link/preset/kamu-disini-2"],
+                        redeemCode: kodeKlaimStatis
+                    };
+                    userInventory.unshift(newItem); itemsClaimed.push(reward.name);
+                }
+            });
+            if(tokenGained > 0) { totalToken += tokenGained; }
+            saveAllDataToStorage(); updateUI(); updateMilestoneVisuals();
+            showModalGachaSummary(results, tokenGained, itemsClaimed);
+        }
+
+        function showModalGachaSummary(allResults, totalTokenGained, itemsList) {
+            const overlay = document.getElementById('modalOverlay'); const box = document.getElementById('modalBox');
+            let listHtml = allResults.map(item => `
+                <div class="multi-reward-item">
+                    <span><i class="fa-solid ${item.icon}" style="color:var(--gold); margin-right:5px;"></i> ${item.name}</span>
+                    <span style="color:${item.type==='token'?'#fff':'#ff3366'}">${item.type==='token'?'Amplas':'Eksklusif!'}</span>
+                </div>
+            `).join('');
+            box.innerHTML = `
+                <h2>Hasil Gacha Spin</h2>
+                <div class="multi-reward-list">${listHtml}</div>
+                <div style="font-size:12px; margin-bottom:15px; text-align:center;">
+                    ${totalTokenGained > 0 ? `<p style="color:var(--gold)">Total Koin Token Masuk: +${totalTokenGained}</p>` : ''}
+                    ${itemsList.length > 0 ? `<p style="color:#00ff00; margin-top:5px;">${itemsList.length} Item Premium terkirim</p>` : ''}
+                </div>
+                <button class="close-modal-btn" onclick="closeModal()" style="border-color:var(--gold); color:var(--gold)">Ambil Semua</button>
+            `;
+            overlay.style.display = 'flex';
+        }
+
+        function buyShopItem(itemType) {
+            if(itemType === 'week' && totalToken >= 1200 && shopLimits.week > 0) {
+                totalToken -= 1200; shopLimits.week--; document.getElementById('limitWeekText').innerText = shopLimits.week;
+                addShopToInventory("HDKU Premium 1 Minggu", "fa-bolt", PREMIUM_CODES.week);
+            } else if(itemType === 'day' && totalToken >= 500 && shopLimits.day > 0) {
+                totalToken -= 500; shopLimits.day--; document.getElementById('limitDayText').innerText = shopLimits.day;
+                addShopToInventory("HDKU Premium 1 Hari", "fa-star", PREMIUM_CODES.day);
+            } else if(itemType === 'hdku_pack' && totalToken >= 100 && shopLimits.hdku_pack > 0) {
+                let codeIndex = 5 - shopLimits.hdku_pack; let chosenLimitCode = SHOP_HDKU_CODES[codeIndex] || "HDKULIMIT05";
+                totalToken -= 100; shopLimits.hdku_pack--; document.getElementById('limitHdkuPackText').innerText = shopLimits.hdku_pack;
+                addShopToInventory("Limit HDKU 100 Token Pack", "fa-box-open", chosenLimitCode);
+            }
+            saveAllDataToStorage(); updateUI();
+        }
+
+        function addShopToInventory(name, icon, staticCode) {
+            let data = {
+                uniqueId: Math.random() + Date.now(), name: name, icon: icon, type: "exclusive_hdku",
+                claimedDate: new Date().toLocaleDateString('id-ID'), links: ["https://link-kamu-shop1.com", "https://link-kamu-shop2.com"], redeemCode: staticCode
             };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    window.generateQR = function() {
-        let data = '';
-
-        if (currentTab === 'link') {
-            data = document.getElementById('linkInput').value.trim();
-            if (!data) return alert('Masukkan URL');
-            if (!data.startsWith('http')) data = 'https://' + data;
+            userInventory.unshift(data); alert(`Sukses Tukar! Cek di Tab 'Hadiah Saya'.`);
         }
 
-        if (currentTab === 'wa') {
-            let number = document.getElementById('waNumber').value.replace(/\D/g, '');
-            let message = encodeURIComponent(document.getElementById('waMessage').value);
-            if (!number) return alert('Masukkan nomor WhatsApp');
-            data = `https://wa.me/${number}?text=${message}`;
+        function renderInventory() {
+            const container = document.getElementById('inventoryContainer');
+            if(userInventory.length === 0) {
+                container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-box-open" style="font-size:25px; margin-bottom:8px; display:block;"></i>Belum ada hadiah.</div>`; return;
+            }
+            container.innerHTML = userInventory.map(item => `
+                <div class="inventory-card" onclick="openInventoryDetail(${item.uniqueId})">
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <i class="fa-solid ${item.icon}" style="color:var(--gold); font-size:18px;"></i>
+                        <div class="inv-details">
+                            <h4>${item.name}</h4>
+                            <span>Diterima: ${item.claimedDate}</span>
+                        </div>
+                    </div>
+                    <div class="inv-status">Buka</div>
+                </div>
+            `).join('');
         }
 
-        if (currentTab === 'text') {
-            data = document.getElementById('textInput').value.trim();
-            if (!data) return alert('Masukkan teks');
+        function openInventoryDetail(uniqueId) {
+            const item = userInventory.find(x => x.uniqueId === uniqueId); if(!item) return;
+            const box = document.getElementById('modalBox');
+            if(item.type === 'exclusive_am') {
+                box.innerHTML = `
+                    <h2>Detail Hadiah AM</h2>
+                    <div class="reward-display-icon"><i class="fa-solid ${item.icon}" style="color:#ff3366;"></i></div>
+                    <div class="reward-display-name">${item.name}</div>
+                    <p style="font-size:11px; text-align:left; color:var(--text-muted); margin-bottom:4px;">Salin Link Preset 1:</p>
+                    <div class="claim-info-box">${item.links[0]}</div>
+                    <button class="copy-action-btn" onclick="copyText('${item.links[0]}')">Salin Link 1</button>
+                    <button class="close-modal-btn" onclick="closeModal()">Kembali</button>
+                `;
+            } else {
+                box.innerHTML = `
+                    <h2>Detail Hadiah</h2>
+                    <div class="reward-display-icon"><i class="fa-solid ${item.icon}"></i></div>
+                    <div class="reward-display-name">${item.name}</div>
+                    <p style="font-size:11px; text-align:left; color:var(--text-muted); margin-bottom:4px;">Kode Premium Anda:</p>
+                    <div class="claim-info-box" style="font-size:15px; font-weight:700; color:var(--gold); letter-spacing:1px;">${item.redeemCode}</div>
+                    <button class="copy-action-btn" onclick="copyText('${item.redeemCode}')">Salin Kode Redeem</button>
+                    <button class="close-modal-btn" onclick="closeModal()">Kembali</button>
+                `;
+            }
+            document.getElementById('modalOverlay').style.display = 'flex';
         }
 
-        if (currentTab === 'img') {
-            const file = document.getElementById('imgInput').files[0];
-            if (!file) return alert('Pilih foto dulu');
-            data = BASE_URL + encodeURIComponent(file.name);
-            alert('Jangan lupa upload file "' + file.name + '" ke Netlify!');
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => alert("Berhasil disalin ke clipboard!"));
         }
 
-        document.getElementById('qrcode').innerHTML = '';
-        qrcode = new QRCode(document.getElementById('qrcode'), {
-            text: data,
-            width: 250,
-            height: 250,
-            colorDark: '#000',
-            colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.H
-        });
-
-        setTimeout(() => {
-            document.getElementById('downloadBtn').style.display = 'block';
-        }, 400);
-    }
-
-    window.downloadQR = function() {
-        let canvas = document.querySelector('#qrcode canvas');
-        if (!canvas) return alert('Buat QR dulu');
-
-        let margin = 20;
-        let size = canvas.width + margin * 2;
-        let newCanvas = document.createElement('canvas');
-        newCanvas.width = size;
-        newCanvas.height = size;
-        let ctx = newCanvas.getContext('2d');
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, size, size);
-        ctx.drawImage(canvas, margin, margin);
-
-        let dataURL = newCanvas.toDataURL('image/png');
-        let link = document.createElement('a');
-        link.download = 'qr-code.png';
-        link.href = dataURL;
-        link.click();
-    }
-}
-</script>
+        function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
+    </script>
 </body>
-  </html>
+</html>
