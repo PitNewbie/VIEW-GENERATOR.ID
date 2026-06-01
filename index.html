@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>event gacha hdku ai.id</title>
-    <!-- Google Fonts & FontAwesome Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Nexus Premium Lucky Spin</title>
+    <link href="https://fonts.googleapis.com/css2=family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -751,16 +750,62 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-    </style>
+    
+.event-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.55);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+.event-popup{
+width:90%;
+max-width:380px;
+background:rgba(20,20,30,0.95);
+border:1px solid rgba(255,215,0,0.3);
+border-radius:22px;
+padding:25px;
+text-align:center;
+box-shadow:0 0 30px rgba(255,215,0,0.2),0 10px 40px rgba(0,0,0,0.6);
+animation:popupShow .3s ease;
+}
+.event-icon{font-size:55px;margin-bottom:10px;}
+.event-popup h2{color:#ffd700;margin-bottom:10px;}
+.event-popup p{color:#d0d0d0;font-size:14px;line-height:1.6;}
+.event-popup button{
+margin-top:18px;width:100%;border:none;
+background:linear-gradient(135deg,#ffd700,#ffb300);
+color:#000;padding:13px;border-radius:12px;
+font-weight:700;cursor:pointer;
+}
+@keyframes popupShow{
+from{opacity:0;transform:scale(.85);}
+to{opacity:1;transform:scale(1);}
+}
+
+</style>
 </head>
 <body>
 
+<div class="event-overlay">
+  <div class="event-popup">
+    <div class="event-icon">🎉</div>
+    <h2>Event Telah Berakhir</h2>
+    <p>Terima kasih sudah mengikuti event ini.<br>Nantikan event selanjutnya yaa!</p>
+    <button onclick="history.back()">Oke Min</button>
+  </div>
+</div>
+
+
     <header>
-        <h1>EVENT GACHA HDKU AI</h1>
+        <h1>Nexus Lucky Spin</h1>
         <p>Gunakan Kristal untuk Mendapatkan Hadiah Premium</p>
     </header>
 
-    <!-- Top Wallet Info & Login Mission Bar -->
     <div class="top-action-container">
         <div class="currency-container">
             <div class="currency-bar crystal-bar">
@@ -772,14 +817,12 @@
                 <span id="tokenBalanceDisplay">0 Token</span>
             </div>
         </div>
-        <!-- KOTAK KECIL LOGIN MISSION TRIGGER -->
         <div class="login-mission-trigger" onclick="openLoginMissionModal()" title="Misi Login Harian">
             <i class="fa-solid fa-calendar-check" style="font-size: 18px;"></i>
             <div class="notification-dot" id="loginNotifDot"></div>
         </div>
     </div>
 
-    <!-- Navigation Tab Menu -->
     <div class="nav-tabs">
         <div class="tab-btn active" onclick="switchTab('spin')">Game Spin</div>
         <div class="tab-btn" onclick="switchTab('redeem')">Redeem Code</div>
@@ -787,10 +830,8 @@
         <div class="tab-btn" onclick="switchTab('inventory')">Hadiah Saya</div>
     </div>
 
-    <!-- SECTION 1: GAME SPIN -->
     <div id="spinSection" class="content-section active">
         
-        <!-- MILESTONE REWARD SYSTEM -->
         <div class="milestone-container">
             <div class="milestone-title">Progress Akumulasi Gacha: <span id="totalSpinDisplay">0</span> Kali Spin</div>
             <div class="milestone-row">
@@ -834,7 +875,6 @@
             </div>
         </div>
 
-        <!-- Tombol Spin Dual Option -->
         <div class="spin-action-area">
             <div class="spin-btn-box">
                 <button class="main-spin-btn" id="spin1Btn" onclick="processSpin(1)">1x Spin</button>
@@ -847,7 +887,6 @@
         </div>
     </div>
 
-    <!-- SECTION 2: REDEEM CODE -->
     <div id="redeemSection" class="content-section">
         <div class="redeem-box">
             <h3>Klaim Kristal Gratis</h3>
@@ -857,10 +896,8 @@
         </div>
     </div>
 
-    <!-- SECTION 3: SHOP EVENT -->
     <div id="shopSection" class="content-section">
         <div class="shop-grid">
-            <!-- SHOP MINGGUAN -->
             <div class="shop-card">
                 <div class="shop-info">
                     <h3>HDKU Premium 1 Minggu</h3>
@@ -870,7 +907,6 @@
                 <button class="buy-btn" id="btnBuyWeek" onclick="buyShopItem('week')">Tukar</button>
             </div>
 
-            <!-- SHOP HARIAN -->
             <div class="shop-card">
                 <div class="shop-info">
                     <h3>HDKU Premium 1 Hari</h3>
@@ -880,7 +916,6 @@
                 <button class="buy-btn" id="btnBuyDay" onclick="buyShopItem('day')">Tukar</button>
             </div>
 
-            <!-- LIMIT HDKU -->
             <div class="shop-card">
                 <div class="shop-info">
                     <h3>Limit HDKU 100 Token</h3>
@@ -892,12 +927,10 @@
         </div>
     </div>
 
-    <!-- SECTION 4: DASHBOARD HADIAH SAYA -->
     <div id="inventorySection" class="content-section">
         <div class="inventory-list" id="inventoryContainer"></div>
     </div>
 
-    <!-- MODAL NOTIFIKASI & RINCIAN HADIAH -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box" id="modalBox"></div>
     </div>
@@ -922,13 +955,13 @@
         };
 
         const LOGIN_REWARDS_DATA = {
-            1: { type: "code", code: "HDKU1520THS-HAPAHSN677", label: "Kode Redeem kristal", desc: "Hadiah Login Hari 1" },
+            1: { type: "code", code: "HDKU1520THS-HAPAHSN677", label: "Kode Premium Harian", desc: "Hadiah Login Hari 1" },
             2: { type: "token", amount: 10, label: "+10 Token", desc: "Hadiah Login Hari 2" },
             3: { type: "token", amount: 20, label: "+20 Token", desc: "Hadiah Login Hari 3" },
-            4: { type: "code", code: "HDKULLBHSJ1208-TTHD", label: "Kode redeem kristal", desc: "Hadiah Login Hari 4" },
+            4: { type: "code", code: "HDKULLBHSJ1208-TTHD", label: "Kode Premium 4 Hari", desc: "Hadiah Login Hari 4" },
             5: { type: "token", amount: 30, label: "+30 Token", desc: "Hadiah Login Hari 5" },
             6: { type: "token", amount: 50, label: "+50 Token", desc: "Hadiah Login Hari 6" },
-            7: { type: "code", code: "HDKU6TSB-YHBKL7Hi12", label: "Kode redeem kristal", desc: "Hadiah Login Hari 7" }
+            7: { type: "code", code: "HDKU6TSB-YHBKL7Hi12", label: "Kode Premium 7 Hari", desc: "Hadiah Login Hari 7" }
         };
 
         // DATABASE REDEEM CODES MURNI KRISTAL BANYAK
@@ -1011,18 +1044,22 @@
         function checkDailyLoginLogic() {
             const todayStr = new Date().toDateString();
             
+            // Jika baru pertama kali buka fitur login mission
             if (!loginMissionState.startDate) {
                 loginMissionState.startDate = todayStr;
                 loginMissionState.lastLoggedDate = todayStr;
                 loginMissionState.currentDayIndex = 1;
             } else {
+                // Hitung selisih hari sesungguhnya dari startDate awal
                 const startDayTime = new Date(loginMissionState.startDate).getTime();
                 const todayTime = new Date(todayStr).getTime();
                 const diffTime = todayTime - startDayTime;
-                const absoluteDayPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                const absoluteDayPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; // Hari ke-X sejak start
 
                 if (absoluteDayPassed <= 7) {
+                    // Cek apakah hari melompat (ada hari terlewat)
                     if (absoluteDayPassed > loginMissionState.currentDayIndex) {
+                        // Tandai hari-hari sebelum hari ini yang belum diklaim sebagai HANGUS
                         for (let i = loginMissionState.currentDayIndex; i < absoluteDayPassed; i++) {
                             if (!loginMissionState.claimedDays[i]) {
                                 loginMissionState.expiredDays[i] = true;
@@ -1032,6 +1069,7 @@
                     loginMissionState.currentDayIndex = absoluteDayPassed;
                     loginMissionState.lastLoggedDate = todayStr;
                 } else {
+                    // Jika sudah lewat dari 7 hari, siklus reset otomatis dari awal
                     loginMissionState.startDate = todayStr;
                     loginMissionState.lastLoggedDate = todayStr;
                     loginMissionState.currentDayIndex = 1;
@@ -1040,6 +1078,7 @@
                 }
             }
 
+            // Atur notifikasi dot merah di tombol kotak misi login
             const currentDay = loginMissionState.currentDayIndex;
             const hasClaimableToday = !loginMissionState.claimedDays[currentDay] && !loginMissionState.expiredDays[currentDay] && currentDay <= 7;
             document.getElementById('loginNotifDot').style.display = hasClaimableToday ? 'block' : 'none';
@@ -1047,55 +1086,8 @@
             saveAllDataToStorage();
         }
 
-        // FUNGSI UNTUK MEMUNCULKAN POP-UP RULES & PANDUAN BERMAIN
-        function showRulesModal() {
-            const overlay = document.getElementById('modalOverlay');
-            const box = document.getElementById('modalBox');
-
-            box.innerHTML = `
-                <h2 style="color: var(--gold); font-size: 20px; margin-bottom: 5px;">
-                    <i class="fa-solid fa-gavel"></i> PERATURAN & PANDUAN
-                </h2>
-                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 15px;">
-                    Baca panduan ini dengan teliti sebelum memulai bermain!
-                </p>
-
-                <div class="multi-reward-list" style="text-align: left; max-height: 280px; font-size: 11px; line-height: 1.6;">
-                    <p style="margin-bottom: 10px;">
-                        <strong style="color: var(--crystal);"><i class="fa-solid fa-gamepad"></i> 1. Cara Bermain & Kumpulkan Token</strong><br>
-                        Gunakan Kristal gratis dari menu <em>Redeem Code</em> untuk melakukan Spin. Kumpulkan koin Token dari hasil gacha harian atau misi login untuk ditukarkan dengan hadiah premium.
-                    </p>
-                    <p style="margin-bottom: 10px;">
-                        <strong style="color: var(--gold);"><i class="fa-solid fa-crown"></i> 2. Hadiah Utama (AM Premium)</strong><br>
-                        Hadiah tertinggi di gacha spin ini adalah <strong>AM Premium</strong> dengan rate eksklusif. Jika kamu beruntung mendapatkannya, link akun premium + sandi otomatis masuk ke tab <em>Hadiah Saya</em>.
-                    </p>
-                    <p style="margin-bottom: 10px;">
-                        <strong style="color: var(--crystal);"><i class="fa-solid fa-shop"></i> 3. Toko Shop Event</strong><br>
-                        Tukarkan akumulasi Token yang sudah kamu kumpulkan di menu <em>Shop Event</em> untuk membeli paket HDKU Premium (1 Hari / 1 Minggu) atau limit Token Pack secara instan.
-                    </p>
-                    <p style="margin-bottom: 5px;">
-                        <strong style="color: var(--success);"><i class="fa-solid fa-key"></i> 4. Cara Pakai Kode Redeem</strong><br>
-                        Bagi yang mendapatkan kode redeem dari Misi Login, langsung redeem kan diredeem code,  Gacha, berikut cara pakainya:
-                        <span style="display: block; background: rgba(0,0,0,0.4); padding: 6px; border-radius: 6px; margin-top: 4px; border: 1px solid rgba(255,255,255,0.05);">
-                            👉 <strong>Salin kode</strong> hadiah kamu di tab <em>Hadiah Saya</em>, lalu pergi ke platform <strong>HDKU AI</strong> dan ketik perintah: <code style="color: var(--gold); font-weight: bold;">.rdm [kode_kamu]</code> untuk mengaktifkan!
-                        </span>
-                    </p>
-                </div>
-
-                <button class="copy-action-btn" onclick="closeModal()" style="margin-top: 15px; background: linear-gradient(135deg, var(--gold) 0%, #cc9900 100%); color: #000;">
-                    oke ngerti minn
-                </button>
-            `;
-            overlay.style.display = 'flex';
-        }
-
         window.onload = function() {
             loadAllDataFromStorage();
-            
-            // Memberikan jeda 500ms setelah load data untuk menampilkan pop-up rules panduan
-            setTimeout(() => {
-                showRulesModal();
-            }, 500);
         };
 
         function updateUI() {
@@ -1184,6 +1176,7 @@
                 totalToken += reward.amount;
                 alert(`Sukses Klaim Login Hari ke-${dayNum}! Hadiah ${reward.amount} Koin Token berhasil ditambahkan.`);
             } else if (reward.type === "code") {
+                // Masukkan juga kodenya ke inventori agar tersimpan permanen
                 let loginItem = {
                     uniqueId: Math.random() + Date.now(),
                     name: `${reward.label} (Misi Login)`,
@@ -1199,7 +1192,7 @@
             checkDailyLoginLogic();
             saveAllDataToStorage();
             updateUI();
-            openLoginMissionModal();
+            openLoginMissionModal(); // Segarkan isi list di popup modal
         }
 
         function claimMilestone(target) {
@@ -1395,4 +1388,4 @@
         function closeModal() { document.getElementById('modalOverlay').style.display = 'none'; }
     </script>
 </body>
-    </html>
+</html>
